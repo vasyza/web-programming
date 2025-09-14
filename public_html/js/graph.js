@@ -5,7 +5,7 @@ class Graph {
         this.width = this.canvas.width;
         this.height = this.canvas.height;
         this.center = {x: this.width / 2, y: this.height / 2};
-        this.scale = 60;
+        this.scale = 50;
         this.currentR = 1;
         this.multipleRadii = [];
         this.points = [];
@@ -37,7 +37,7 @@ class Graph {
         this.ctx.strokeStyle = "#f0f0f0";
         this.ctx.lineWidth = 0.5;
 
-        for (let i = -5; i <= 5; i++) {
+        for (let i = -10; i <= 10; i++) {
             const x = this.center.x + i * this.scale;
             const y = this.center.y - i * this.scale;
 
@@ -82,13 +82,12 @@ class Graph {
 
     drawArea() {
         const radiiToDraw = this.multipleRadii.length > 0 ? this.multipleRadii : [this.currentR];
-        
+
         radiiToDraw.forEach((radius, index) => {
             const r = Math.abs(radius) * this.scale;
-            const opacity = 0.25;
             const colors = [
                 'rgba(102, 126, 234, 0.25)',
-                'rgba(234, 102, 126, 0.25)', 
+                'rgba(234, 102, 126, 0.25)',
                 'rgba(126, 234, 102, 0.25)',
                 'rgba(234, 194, 102, 0.25)',
                 'rgba(194, 102, 234, 0.25)'
@@ -198,11 +197,6 @@ class Graph {
         if (window.onGraphClick) {
             window.onGraphClick(x, y);
         }
-    }
-
-    setR(r) {
-        this.currentR = r;
-        this.draw();
     }
 
     setPreviewPoint(x, y) {

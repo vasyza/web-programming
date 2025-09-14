@@ -3,6 +3,7 @@ package fcgi;
 import com.fastcgi.FCGIInterface;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -13,8 +14,8 @@ import java.util.*;
 public class AreaCheckServlet {
     private static final List<Result> results = new ArrayList<>();
     private static final Gson gson = new GsonBuilder()
-        .setPrettyPrinting()
-        .create();
+            .setPrettyPrinting()
+            .create();
 
     public static void main(String[] args) {
         FCGIInterface fcgi = new FCGIInterface();
@@ -24,16 +25,16 @@ public class AreaCheckServlet {
                 long startTime = System.nanoTime();
 
                 String queryString = System.getProperty("QUERY_STRING");
-                Map<String,String> queryParams = parseQueryString(queryString);
+                Map<String, String> queryParams = parseQueryString(queryString);
 
                 double x = Double.parseDouble(
-                    queryParams.getOrDefault("x", "0")
+                        queryParams.getOrDefault("x", "0")
                 );
                 double y = Double.parseDouble(
-                    queryParams.getOrDefault("y", "0")
+                        queryParams.getOrDefault("y", "0")
                 );
                 double r = Double.parseDouble(
-                    queryParams.getOrDefault("r", "1")
+                        queryParams.getOrDefault("r", "1")
                 );
 
                 if (!validateParams(x, y, r)) {
@@ -47,14 +48,14 @@ public class AreaCheckServlet {
                 double executionTime = (endTime - startTime) / 1_000_000.0;
 
                 Result result = new Result(
-                    x,
-                    y,
-                    r,
-                    hit,
-                    LocalDateTime.now().format(
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                    ),
-                    executionTime
+                        x,
+                        y,
+                        r,
+                        hit,
+                        LocalDateTime.now().format(
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                        ),
+                        executionTime
                 );
 
                 results.add(result);
@@ -74,8 +75,8 @@ public class AreaCheckServlet {
                 String[] keyValue = pair.split("=");
                 if (keyValue.length == 2) {
                     params.put(
-                        keyValue[0],
-                        URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8)
+                            keyValue[0],
+                            URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8)
                     );
                 }
             }
@@ -84,7 +85,7 @@ public class AreaCheckServlet {
     }
 
     private static boolean validateParams(double x, double y, double r) {
-        double[] validX = { -2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2 };
+        double[] validX = {-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2};
         boolean xValid = false;
         for (double val : validX) {
             if (Math.abs(x - val) < 0.001) {
@@ -95,7 +96,7 @@ public class AreaCheckServlet {
 
         boolean yValid = y >= -3 && y <= 5;
 
-        double[] validR = { 1, 1.5, 2, 2.5, 3 };
+        double[] validR = {1, 1.5, 2, 2.5, 3};
         boolean rValid = false;
         for (double val : validR) {
             if (Math.abs(r - val) < 0.001) {
@@ -165,12 +166,12 @@ public class AreaCheckServlet {
         double executionTime;
 
         Result(
-            double x,
-            double y,
-            double r,
-            boolean hit,
-            String currentTime,
-            double executionTime
+                double x,
+                double y,
+                double r,
+                boolean hit,
+                String currentTime,
+                double executionTime
         ) {
             this.x = x;
             this.y = y;

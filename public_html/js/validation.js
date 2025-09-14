@@ -1,6 +1,6 @@
 const isNumericStrict = (s) => {
     const t = String(s).trim();
-    if (t === '') return false;
+    if (t === "") return false;
     const n = Number(t);
     return Number.isFinite(n);
 };
@@ -16,7 +16,8 @@ function validateX(value) {
     const validValues = [-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2];
     if (!validValues.includes(x)) {
         return {
-            valid: false, message: "Выберите одно из предложенных значений X",
+            valid: false,
+            message: "Выберите одно из предложенных значений X",
         };
     }
     return {valid: true, message: ""};
@@ -30,7 +31,7 @@ function validateY(value) {
     value = value.replace(",", ".");
 
     if (!isNumericStrict(value)) {
-        return {valid: false, message: "Y должен быть числом"}
+        return {valid: false, message: "Y должен быть числом"};
     }
 
     const y = parseFloat(value);
@@ -46,12 +47,16 @@ function validateY(value) {
 
 function validateR(selectedOptions) {
     if (!selectedOptions || selectedOptions.length === 0) {
-        return {valid: false, message: "Выберите хотя бы одно значение R", values: []};
+        return {
+            valid: false,
+            message: "Выберите хотя бы одно значение R",
+            values: [],
+        };
     }
 
     const validValues = [1, 1.5, 2, 2.5, 3];
     const values = [];
-    
+
     for (let i = 0; i < selectedOptions.length; i++) {
         const option = selectedOptions[i];
         const r = parseFloat(option.value);
@@ -60,9 +65,9 @@ function validateR(selectedOptions) {
         }
         if (!validValues.includes(r)) {
             return {
-                valid: false, 
+                valid: false,
                 message: "Выберите только из предложенных значений R",
-                values: []
+                values: [],
             };
         }
         values.push(r);
@@ -89,4 +94,5 @@ function clearAllErrors() {
     clearError("x-error");
     clearError("y-error");
     clearError("r-error");
+    clearError("global-error");
 }

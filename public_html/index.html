@@ -1,142 +1,143 @@
 <!doctype html>
 <html lang="ru">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Лабораторная работа №1</title>
-        <link rel="stylesheet" href="css/styles.css" />
-    </head>
-    <body>
-        <header>
-            <h1>Лабораторная работа №1</h1>
-            <div class="student-info">
-                <p>Студент: Яременко Владимир Михайлович</p>
-                <p>Группа: P3220</p>
-                <p>Вариант: 2011</p>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Лабораторная работа №1</title>
+    <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<header>
+    <h1>Лабораторная работа №1</h1>
+    <div class="student-info">
+        <p>Студент: Яременко Владимир Михайлович</p>
+        <p>Группа: P3220</p>
+        <p>Вариант: 2011</p>
+    </div>
+</header>
+
+<main>
+    <div class="container">
+        <section class="input-section">
+            <h2>Проверка попадания точки в область</h2>
+
+            <div class="graph-container">
+                <canvas id="graph" width="600" height="600"></canvas>
             </div>
-        </header>
+            <span class="error-message" id="global-error"></span>
 
-        <main>
-            <div class="container">
-                <section class="input-section">
-                    <h2>Проверка попадания точки в область</h2>
-
-                    <div class="graph-container">
-                        <canvas id="graph" width="400" height="400"></canvas>
+            <form id="coordinateForm" method="GET">
+                <div class="form-group">
+                    <label for="x-radios">Координата X:</label>
+                    <div class="radio-group" id="x-radios">
+                        <label class="radio-label">
+                            <input type="radio" name="x" value="-2"/>
+                            <span>-2</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="x" value="-1.5"/>
+                            <span>-1.5</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="x" value="-1"/>
+                            <span>-1</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="x" value="-0.5"/>
+                            <span>-0.5</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="x" value="0"/>
+                            <span>0</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="x" value="0.5"/>
+                            <span>0.5</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="x" value="1"/>
+                            <span>1</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="x" value="1.5"/>
+                            <span>1.5</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="x" value="2"/>
+                            <span>2</span>
+                        </label>
                     </div>
+                    <span class="error-message" id="x-error"></span>
+                </div>
 
-                    <form id="coordinateForm" method="GET">
-                        <div class="form-group">
-                            <label for="x-coord">Координата X:</label>
-                            <div class="radio-group" id="x-radios">
-                                <label class="radio-label">
-                                    <input type="radio" name="x" value="-2" />
-                                    <span>-2</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="x" value="-1.5" />
-                                    <span>-1.5</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="x" value="-1" />
-                                    <span>-1</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="x" value="-0.5" />
-                                    <span>-0.5</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="x" value="0" />
-                                    <span>0</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="x" value="0.5" />
-                                    <span>0.5</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="x" value="1" />
-                                    <span>1</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="x" value="1.5" />
-                                    <span>1.5</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="x" value="2" />
-                                    <span>2</span>
-                                </label>
-                            </div>
-                            <span class="error-message" id="x-error"></span>
-                        </div>
+                <div class="form-group">
+                    <label for="y-coord">Координата Y:</label>
+                    <input
+                            type="text"
+                            id="y-coord"
+                            name="y"
+                            placeholder="От -3 до 5"
+                            required
+                    />
+                    <span class="error-message" id="y-error"></span>
+                </div>
 
-                        <div class="form-group">
-                            <label for="y-coord">Координата Y:</label>
-                            <input
-                                type="text"
-                                id="y-coord"
-                                name="y"
-                                placeholder="От -3 до 5"
-                                required
-                            />
-                            <span class="error-message" id="y-error"></span>
-                        </div>
+                <div class="form-group">
+                    <label for="r-coord">Радиус R:</label>
+                    <select
+                            id="r-coord"
+                            name="r"
+                            multiple
+                            size="5"
+                            required
+                    >
+                        <option value="1">1</option>
+                        <option value="1.5">1.5</option>
+                        <option value="2">2</option>
+                        <option value="2.5">2.5</option>
+                        <option value="3">3</option>
+                    </select>
+                    <span class="error-message" id="r-error"></span>
+                </div>
 
-                        <div class="form-group">
-                            <label for="r-coord">Радиус R:</label>
-                            <select
-                                id="r-coord"
-                                name="r"
-                                multiple
-                                size="5"
-                                required
-                            >
-                                <option value="1">1</option>
-                                <option value="1.5">1.5</option>
-                                <option value="2">2</option>
-                                <option value="2.5">2.5</option>
-                                <option value="3">3</option>
-                            </select>
-                            <span class="error-message" id="r-error"></span>
-                        </div>
+                <div class="form-buttons">
+                    <button type="submit" class="submit-btn">
+                        Проверить
+                    </button>
+                    <button
+                            type="button"
+                            class="clear-btn"
+                            id="clearBtn"
+                    >
+                        Очистить
+                    </button>
+                </div>
+            </form>
+        </section>
 
-                        <div class="form-buttons">
-                            <button type="submit" class="submit-btn">
-                                Проверить
-                            </button>
-                            <button
-                                type="button"
-                                class="clear-btn"
-                                id="clearBtn"
-                            >
-                                Очистить
-                            </button>
-                        </div>
-                    </form>
-                </section>
-
-                <section class="results-section">
-                    <h2>Результаты проверки</h2>
-                    <div class="table-container">
-                        <table id="resultsTable">
-                            <thead>
-                                <tr>
-                                    <th>X</th>
-                                    <th>Y</th>
-                                    <th>R</th>
-                                    <th>Результат</th>
-                                    <th>Время</th>
-                                    <th>Выполнение (мс)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="resultsBody"></tbody>
-                        </table>
-                    </div>
-                </section>
+        <section class="results-section">
+            <h2>Результаты проверки</h2>
+            <div class="table-container">
+                <table id="resultsTable">
+                    <thead>
+                    <tr>
+                        <th>X</th>
+                        <th>Y</th>
+                        <th>R</th>
+                        <th>Результат</th>
+                        <th>Время</th>
+                        <th>Выполнение (мс)</th>
+                    </tr>
+                    </thead>
+                    <tbody id="resultsBody"></tbody>
+                </table>
             </div>
-        </main>
+        </section>
+    </div>
+</main>
 
-        <script src="js/graph.js"></script>
-        <script src="js/validation.js"></script>
-        <script src="js/main.js"></script>
-    </body>
+<script src="js/graph.js"></script>
+<script src="js/validation.js"></script>
+<script src="js/main.js"></script>
+</body>
 </html>

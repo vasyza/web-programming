@@ -172,10 +172,11 @@ h2 {
 
 .error-message {
     color: #e74c3c;
-    font-size: 12px;
+    font-size: 14px;
     margin-top: 5px;
     display: block;
     min-height: 16px;
+    font-weight: 500;
 }
 
 .form-buttons {
