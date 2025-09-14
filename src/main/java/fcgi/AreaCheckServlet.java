@@ -88,7 +88,7 @@ public class AreaCheckServlet {
         double[] validX = {-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2};
         boolean xValid = false;
         for (double val : validX) {
-            if (Math.abs(x - val) < 0.001) {
+            if (Math.abs(x - val) == 0) {
                 xValid = true;
                 break;
             }
@@ -99,7 +99,7 @@ public class AreaCheckServlet {
         double[] validR = {1, 1.5, 2, 2.5, 3};
         boolean rValid = false;
         for (double val : validR) {
-            if (Math.abs(r - val) < 0.001) {
+            if (Math.abs(r - val) == 0) {
                 rValid = true;
                 break;
             }
