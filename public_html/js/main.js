@@ -22,9 +22,12 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("y-coord").value = y;
     selectedX = x;
 
-    for (let option of selectedOptions) {
-      submitFormWithValues(x, y, option.value);
-    }
+    const radii = Array.from(selectedOptions).map((opt) =>
+      parseFloat(opt.value),
+    );
+
+    clearAllErrors();
+    sendBatchRequest(parseFloat(x), parseFloat(y), radii);
   };
 });
 
@@ -128,14 +131,61 @@ function submitForm() {
   const x = parseFloat(xValue);
   const y = yValidation.value || parseFloat(yValue);
 
-  rValidation.values.forEach((r) => {
-    sendRequest(x, y, r);
-  });
+  sendBatchRequest(x, y, rValidation.values);
 }
 
-function submitFormWithValues(x, y, r) {
-  clearAllErrors();
-  sendRequest(parseFloat(x), parseFloat(y), parseFloat(r));
+function sendBatchRequest(x, y, radii) {
+  const params = new URLSearchParams({
+    x: x,
+    y: y,
+    r: radii.join(","),
+  });
+
+  fetch(`${FCGI_URL}?${params}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        const jsonData = await response.json();
+        if (jsonData.error) {
+          showError(
+            "server-error",
+            jsonData.error === "Invalid parameters"
+              ? "Неправильные параметры"
+              : jsonData.error,
+          );
+          throw new Error(jsonData.error);
+        }
+        throw new Error("Ошибка сервера");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (data.error) {
+        console.error("Ошибка:", data.error);
+        return;
+      }
+
+      if (data.batchResults) {
+        data.batchResults.forEach((result) => {
+          addResultToTable(result);
+          graph.addPoint(result.x, result.y, result.hit, result.r);
+        });
+      } else if (data.currentResult) {
+        addResultToTable(data.currentResult);
+        graph.addPoint(x, y, data.currentResult.hit, data.currentResult.r);
+      }
+
+      if (data.allResults && data.allResults.length > 0) {
+        updateResultsTable(data.allResults);
+      }
+    })
+    .catch((error) => {
+      console.error("Ошибка запроса:", error);
+    });
 }
 
 function sendRequest(x, y, r) {
