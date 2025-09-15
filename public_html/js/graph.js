@@ -229,6 +229,16 @@ class Graph {
     this.draw();
   }
 
+  loadPoints(results) {
+    this.points = results.map((result) => ({
+      x: result.x,
+      y: result.y,
+      hit: result.hit,
+      r: result.r,
+    }));
+    this.draw();
+  }
+
   setMultipleRadii(radii) {
     this.multipleRadii = radii.sort((a, b) => b - a);
     this.draw();
