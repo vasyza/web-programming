@@ -90,30 +90,68 @@ class Graph {
 
   drawArea() {
     const ctx = this.ctx;
-    const r = Math.abs(this.getSelectedR()) * this.scale;
-    ctx.fillStyle = "rgba(102, 126, 234, 0.25)";
-    ctx.strokeStyle = "rgba(102, 126, 234, 0.8)";
+    const R = Math.abs(this.getSelectedR());
+    const sx = (R / 7) * this.scale;
+    const sy = (R / 6) * this.scale;
+    const X = (xb) => this.center.x + xb * sx;
+    const Y = (yb) => this.center.y - yb * sy;
+
+    const abs = Math.abs;
+    const sqrt = (t) => Math.sqrt(Math.max(0, t));
+    const sgn = (t) => (t > 0 ? 1 : t < 0 ? -1 : 0);
+
+    const w = (x) => 3 * sqrt(1 - (x / 7) ** 2);
+    const l = (x) =>
+      0.5 * (x + 3) -
+      ((3 * Math.sqrt(10)) / 7) * sqrt(4 - (x + 1) ** 2) +
+      (6 * Math.sqrt(10)) / 7;
+    const r = (x) =>
+      0.5 * (3 - x) -
+      ((3 * Math.sqrt(10)) / 7) * sqrt(4 - (x - 1) ** 2) +
+      (6 * Math.sqrt(10)) / 7;
+    const h = (x) => {
+      const ax = abs(x);
+      if (ax < 0.5) return 2.25;
+      if (ax < 0.75) return 3 * ax + 0.75;
+      if (ax <= 1) return 9 - 8 * ax;
+      return NaN;
+    };
+    const fTop = (x) =>
+      x < -3 ? w(x) : x < -1 ? l(x) : x <= 1 ? h(x) : x < 3 ? r(x) : w(x);
+
+    const gBottom = (x) => {
+      const ax = abs(x);
+      const t2i = abs(ax - 2) - 1;
+      const t2 = sqrt(1 - t2i * t2i);
+      const ell = 3 * sqrt(1 - (x / 7) ** 2);
+      const bracket =
+        0.5 * ax + t2 - ((3 * Math.sqrt(33) - 7) / 112) * x * x + ell - 3;
+      const window = sgn(x + 4) - sgn(x - 4);
+      return 0.5 * bracket * window - ell;
+    };
+
+    ctx.fillStyle = "rgba(102,126,234,0.25)";
+    ctx.strokeStyle = "rgba(102,126,234,0.8)";
     ctx.lineWidth = 1;
 
-    ctx.beginPath();
-    ctx.rect(this.center.x - r, this.center.y - r / 2, r, r / 2);
-    ctx.fill();
-    ctx.stroke();
+    const path = new Path2D();
+    const XMIN = -7,
+      XMAX = 7;
+    const steps = 800;
+    const dx = (XMAX - XMIN) / steps;
 
-    ctx.beginPath();
-    ctx.moveTo(this.center.x, this.center.y);
-    ctx.lineTo(this.center.x - r / 2, this.center.y);
-    ctx.lineTo(this.center.x, this.center.y + r / 2);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    let xb = XMIN;
+    path.moveTo(X(xb), Y(fTop(xb)));
+    for (xb = XMIN + dx; xb <= XMAX + 1e-9; xb += dx) {
+      path.lineTo(X(xb), Y(fTop(xb)));
+    }
 
-    ctx.beginPath();
-    ctx.arc(this.center.x, this.center.y, r / 2, 0, Math.PI / 2);
-    ctx.lineTo(this.center.x, this.center.y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    for (xb = XMAX; xb >= XMIN - 1e-9; xb -= dx) {
+      path.lineTo(X(xb), Y(gBottom(xb)));
+    }
+    path.closePath();
+    ctx.fill(path);
+    ctx.stroke(path);
   }
 
   drawLabels() {
