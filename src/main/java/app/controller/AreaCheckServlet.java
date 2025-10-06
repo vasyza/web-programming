@@ -2,6 +2,7 @@ package app.controller;
 
 import app.model.Result;
 import app.model.ResultsBean;
+import app.util.Converter;
 import app.util.Geometry;
 import app.util.Validator;
 import jakarta.servlet.ServletException;
@@ -26,9 +27,9 @@ public class AreaCheckServlet extends HttpServlet {
         String sr = req.getParameter("r");
 
         try {
-            Double xVal = Validator.parseDoubleNormalized(sx);
-            Double yVal = Validator.parseDoubleNormalized(sy);
-            Integer rVal = Validator.parseIntNormalized(sr);
+            Double xVal = Converter.parseDoubleNormalized(sx);
+            Double yVal = Converter.parseDoubleNormalized(sy);
+            Integer rVal = Converter.parseIntNormalized(sr);
 
             if (xVal == null || yVal == null || rVal == null) {
                 req.setAttribute(

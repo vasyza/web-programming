@@ -85,10 +85,24 @@
         </section>
     </section>
 
+    Кол-во сессий: <%= count %>
+
     <section class="graph-section">
         <canvas id="graph" width="500" height="500"></canvas>
     </section>
 </main>
+
+<%!
+    private static int count = 0;
+%>
+
+<%
+    Boolean isCounted = ( Boolean) session.getAttribute("isCounted");
+    if (isCounted == null) {
+        count++;
+        session.setAttribute("isCounted", true);
+}
+%>
 
 <script>
   window.ALL_RESULTS = [
