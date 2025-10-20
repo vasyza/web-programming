@@ -1,2 +1,2 @@
 mvn clean package
-p "target/lab2.war" "$JBOSS_HOME/standalone/deployments/"
+cp "target/lab3.war" "$JBOSS_HOME/standalone/deployments/"

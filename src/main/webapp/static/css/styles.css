@@ -33,7 +33,10 @@ label {
 .radio {
     margin-right: 8px;
 }
-button {
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
     padding: 6px 10px;
     margin-right: 6px;
 }
@@ -93,4 +96,40 @@ td {
 }
 .form-section {
     flex: 1;
+}
+.r-radio-group {
+    display: inline-flex;
+    gap: 8px;
+}
+.r-radio-group table {
+    border: none;
+    width: auto;
+}
+.r-radio-group td {
+    border: none;
+    padding: 0 8px 0 0;
+}
+.r-radio-group input[type="radio"] {
+    margin-right: 4px;
+    cursor: pointer;
+}
+.r-radio-group input[type="radio"]:checked {
+    accent-color: #446;
+}
+.r-radio-group label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+#x-slider {
+    width: 200px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+#x-value {
+    display: inline-block;
+    min-width: 40px;
+    font-weight: bold;
+    color: #446;
 }

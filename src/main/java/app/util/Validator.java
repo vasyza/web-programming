@@ -16,11 +16,11 @@ public final class Validator {
     }
 
     public static boolean isValidX(double x) {
-        return x >= -5 && x <= 3;
+        return x >= -3 && x <= 3;
     }
 
     public static boolean isValidY(double y) {
-        return y >= -3 && y <= 5;
+        return y >= -5 && y <= 5;
     }
 
     public static boolean isValidR(int r) {

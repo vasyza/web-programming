@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html">
+<h:head>
+    <meta charset="UTF-8"/>
+    <title>Лабораторная 3 — Старт</title>
+    <link rel="stylesheet"
+          href="#{facesContext.externalContext.requestContextPath}/static/css/styles.css"/>
+</h:head>
+<h:body>
+<header class="header">
+    <h1>Лабораторная 3</h1>
+    <div>Студент: Яременко Владимир Михайлович | Группа: P3220 | Вариант: 45768</div>
+    <hr/>
+</header>
+<main class="container" style="flex-direction: column">
+    <section class="form-section" style="max-width: 640px;">
+        <h2>Проверка попадания точки в область</h2>
+        <p>Перейдите на основную страницу, чтобы выполнить проверку.</p>
+        <div class="field">
+            <label for="clock-value">Текущее время:</label>
+            <span id="clock-value"></span>
+        </div>
+        <h:link outcome="goMain" styleClass="small" value="Перейти на основную страницу приложения"/>
+    </section>
+</main>
+
+<script type="text/javascript">
+  const clockEl = document.getElementById('clock-value');
+  function updateClock() {
+    if (!clockEl) return;
+    const now = new Date();
+    clockEl.textContent = now.toLocaleString('ru-RU', {
+      dateStyle: 'full',
+      timeStyle: 'medium'
+    });
+  }
+  updateClock();
+  setInterval(updateClock, 12000);
+</script>
+</h:body>
+</html>

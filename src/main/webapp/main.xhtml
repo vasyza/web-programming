@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <meta charset="UTF-8"/>
+    <title>Лабораторная 3 — Основная страница</title>
+    <link rel="stylesheet"
+          href="#{facesContext.externalContext.requestContextPath}/static/css/styles.css"/>
+    <script type="text/javascript">
+        window.SELECTED_R = <h:outputText value="#{resultsBean.selectedR}"/>;
+        window.ALL_RESULTS = <h:outputText value="#{resultsBean.resultsJson}" escape="false"/>;
+    </script>
+    <script defer="defer" src="#{facesContext.externalContext.requestContextPath}/static/js/validation.js"></script>
+    <script defer="defer" src="#{facesContext.externalContext.requestContextPath}/static/js/graph.js"></script>
+</h:head>
+<h:body>
+<header class="header">
+    <h1>Лабораторная 3</h1>
+    <div>Студент: Яременко Владимир Михайлович | Группа: P3220 | Вариант: 45768</div>
+    <h:link outcome="goStart" styleClass="small" value="На стартовую страницу"/>
+    <hr/>
+</header>
+<main class="container">
+    <section class="form-section">
+        <ui:fragment rendered="#{not empty resultsBean.globalError}">
+            <div class="error" id="global-error">#{resultsBean.globalError}</div>
+        </ui:fragment>
+        <ui:fragment rendered="#{not empty resultsBean.globalMessage}">
+            <div class="message" id="global-message">#{resultsBean.globalMessage}</div>
+        </ui:fragment>
+
+        <h:form id="hitForm" prependId="false" onsubmit="return validateForm();">
+            <input type="hidden" id="x" name="x" value="#{resultsBean.formX}"/>
+            <input type="hidden" id="clear-flag" name="clear" value="0"/>
+            <fieldset>
+                <legend>Координаты</legend>
+
+                <div class="field">
+                    <label for="x-slider">X (-3..3):</label>
+                    <input id="x-slider" type="range" min="-3" max="3" step="0.5"
+                           value="#{resultsBean.formX}"
+                           oninput="document.getElementById('x').value = this.value; document.getElementById('x-value').textContent = this.value;"/>
+                    <span id="x-value">#{resultsBean.formX}</span>
+                    <div class="field-error" id="x-error"></div>
+                </div>
+
+                <div class="field">
+                    <label for="y">Y (-5..5):</label>
+                    <input id="y" name="y" type="text" placeholder="-5 .. 5" value="#{resultsBean.formY}"/>
+                    <div class="field-error" id="y-error"></div>
+                </div>
+
+                <div class="field">
+                    <label>R:</label>
+                    <h:selectOneRadio id="r" value="#{resultsBean.formR}" styleClass="r-radio-group">
+                        <f:selectItems value="#{resultsBean.ROptions}" var="rVal"
+                                       itemValue="#{rVal}" itemLabel="#{rVal}"/>
+                    </h:selectOneRadio>
+                    <div class="field-error" id="r-error"></div>
+                </div>
+
+                <div class="actions">
+                    <h:commandButton id="submitBtn"
+                                     value="Проверить"
+                                     action="#{resultsBean.submit}"
+                                     onclick="document.getElementById('clear-flag').value='0';"/>
+                    <button type="button" onclick="clearForm()">Сбросить</button>
+                    <h:commandButton id="clearBtn"
+                                     value="Очистить историю"
+                                     action="#{resultsBean.submit}"
+                                     onclick="document.getElementById('clear-flag').value='1';window.__skipValidation=true;"/>
+                </div>
+            </fieldset>
+        </h:form>
+
+        <section class="results-section">
+            <h2>Предыдущие результаты</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>X</th>
+                    <th>Y</th>
+                    <th>R</th>
+                    <th>Попадание</th>
+                    <th>Время</th>
+                    <th>Вып., мс</th>
+                </tr>
+                </thead>
+                <tbody>
+                <ui:repeat value="#{resultsBean.resultsForTable}" var="res">
+                    <tr>
+                        <td>#{res.xFormatted}</td>
+                        <td>#{res.yFormatted}</td>
+                        <td>#{res.r}</td>
+                        <td class="#{res.hit ? 'hit-true' : 'hit-false'}">
+                            #{res.hit ? 'Да' : 'Нет'}
+                        </td>
+                        <td>#{res.checkedAtFormatted}</td>
+                        <td>#{res.executionMsFormatted}</td>
+                    </tr>
+                </ui:repeat>
+                </tbody>
+            </table>
+        </section>
+
+        Кол-во сессий: #{resultsBean.sessionCount}
+    </section>
+
+    <section class="graph-section">
+        <canvas id="graph" width="500" height="500"></canvas>
+    </section>
+</main>
+
+<script type="text/javascript">
+//<![CDATA[
+  document.addEventListener("DOMContentLoaded", function () {
+    const xSlider = document.getElementById("x-slider");
+    const xValue = document.getElementById("x-value");
+    const xHidden = document.getElementById("x");
+
+    if (xSlider && xValue && xHidden) {
+      if (xHidden.value) {
+        xSlider.value = xHidden.value;
+        xValue.textContent = xHidden.value;
+      } else {
+        xSlider.value = "0";
+        xValue.textContent = "0";
+        xHidden.value = "0";
+      }
+    }
+
+    const initGraphPoints = function() {
+      if (window.__graph && window.ALL_RESULTS) {
+        window.__graph.setPoints(window.ALL_RESULTS);
+      } else {
+        setTimeout(initGraphPoints, 50);
+      }
+    };
+    initGraphPoints();
+  });
+//]]>
+</script>
+</h:body>
+</html>

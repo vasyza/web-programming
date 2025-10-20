@@ -1,14 +1,3 @@
-function selectX(val) {
-  document.getElementById("x").value = String(val);
-
-  document
-    .querySelectorAll(".x-btn")
-    .forEach((btn) => btn.classList.remove("active"));
-  const btns = Array.from(document.querySelectorAll(".x-btn"));
-  const target = btns.find((b) => b.textContent.trim() === String(val));
-  if (target) target.classList.add("active");
-}
-
 function setError(id, msg) {
   const el = document.getElementById(id);
   if (el) el.textContent = msg || "";
@@ -25,6 +14,10 @@ function clearErrors() {
 }
 
 function validateForm() {
+  if (window.__skipValidation) {
+    window.__skipValidation = false;
+    return true;
+  }
   clearErrors();
   const xStr = document.getElementById("x").value;
   const yStrRaw = document.getElementById("y").value;
@@ -32,12 +25,12 @@ function validateForm() {
   const rEl = document.querySelector('input[name="r"]:checked');
 
   if (!xStr) {
-    setError("x-error", "Выберите X кнопкой или кликните по графику");
+    setError("x-error", "Выберите X слайдером или кликните по графику");
     return false;
   }
   const x = Number(xStr);
-  if (!isFinite(x) || x < -5 || x > 3) {
-    setError("x-error", "X должен быть в диапазоне [-5; 3]");
+  if (!isFinite(x) || x < -3 || x > 3) {
+    setError("x-error", "X должен быть в диапазоне [-3; 3]");
     return false;
   }
 
@@ -46,8 +39,8 @@ function validateForm() {
     return false;
   }
   const y = Number(yStr);
-  if (y < -3 || y > 5) {
-    setError("y-error", "Y должен быть в диапазоне [-3; 5]");
+  if (y < -5 || y > 5) {
+    setError("y-error", "Y должен быть в диапазоне [-5; 5]");
     return false;
   }
 
@@ -67,22 +60,25 @@ function validateForm() {
 function clearForm() {
   document.getElementById("hitForm").reset();
   document.getElementById("x").value = "";
-  document
-    .querySelectorAll(".x-btn")
-    .forEach((btn) => btn.classList.remove("active"));
+  const xSlider = document.getElementById("x-slider");
+  const xValue = document.getElementById("x-value");
+  if (xSlider) xSlider.value = "0";
+  if (xValue) xValue.textContent = "0";
+  const clearFlag = document.getElementById("clear-flag");
+  if (clearFlag) clearFlag.value = "0";
   clearErrors();
 }
 
 function clearHistory() {
-  const form = document.createElement("form");
-  form.method = "get";
-  form.action =
-    window.location.pathname.replace(/\/[^/]*$/, "") + "/controller";
-  const input = document.createElement("input");
-  input.type = "hidden";
-  input.name = "clear";
-  input.value = "1";
-  form.appendChild(input);
-  document.body.appendChild(form);
+  const form = document.getElementById("hitForm");
+  if (!form) return;
+  const clearFlag = document.getElementById("clear-flag");
+  if (clearFlag) {
+    clearFlag.value = "1";
+  }
+  window.__skipValidation = true;
   form.submit();
+  setTimeout(() => {
+    if (clearFlag) clearFlag.value = "0";
+  }, 0);
 }

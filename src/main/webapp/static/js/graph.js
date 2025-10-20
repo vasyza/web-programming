@@ -13,23 +13,40 @@ class Graph {
   }
 
   getSelectedR() {
+    const rEl = document.querySelector('input[name="r"]:checked');
+    if (rEl) {
+      return Number(rEl.value);
+    }
     if (typeof window.SELECTED_R === "number" && isFinite(window.SELECTED_R)) {
       return window.SELECTED_R;
     }
-    const rEl = document.querySelector('input[name="r"]:checked');
-    return rEl ? Number(rEl.value) : 1;
+    return 1;
   }
 
   init() {
     this.draw();
     this.canvas.addEventListener("click", this.handleClick.bind(this));
-    document.addEventListener("change", (e) => {
-      if (e.target && e.target.name === "r") {
-        const rr = document.getElementById("r-error");
-        if (rr) rr.textContent = "";
-        this.draw();
-      }
-    });
+
+    const attachRadioListeners = () => {
+      const radios = document.querySelectorAll('input[name="r"]');
+      radios.forEach((radio) => {
+        radio.addEventListener("change", () => {
+          const rr = document.getElementById("r-error");
+          if (rr) rr.textContent = "";
+          this.draw();
+        });
+        radio.addEventListener("click", () => {
+          const rr = document.getElementById("r-error");
+          if (rr) rr.textContent = "";
+          this.draw();
+        });
+      });
+    };
+
+    attachRadioListeners();
+
+    setTimeout(attachRadioListeners, 100);
+    setTimeout(attachRadioListeners, 300);
   }
 
   clear() {
@@ -91,67 +108,38 @@ class Graph {
   drawArea() {
     const ctx = this.ctx;
     const R = Math.abs(this.getSelectedR());
-    const sx = (R / 7) * this.scale;
-    const sy = (R / 6) * this.scale;
-    const X = (xb) => this.center.x + xb * sx;
-    const Y = (yb) => this.center.y - yb * sy;
-
-    const abs = Math.abs;
-    const sqrt = (t) => Math.sqrt(Math.max(0, t));
-    const sgn = (t) => (t > 0 ? 1 : t < 0 ? -1 : 0);
-
-    const w = (x) => 3 * sqrt(1 - (x / 7) ** 2);
-    const l = (x) =>
-      0.5 * (x + 3) -
-      ((3 * Math.sqrt(10)) / 7) * sqrt(4 - (x + 1) ** 2) +
-      (6 * Math.sqrt(10)) / 7;
-    const r = (x) =>
-      0.5 * (3 - x) -
-      ((3 * Math.sqrt(10)) / 7) * sqrt(4 - (x - 1) ** 2) +
-      (6 * Math.sqrt(10)) / 7;
-    const h = (x) => {
-      const ax = abs(x);
-      if (ax < 0.5) return 2.25;
-      if (ax < 0.75) return 3 * ax + 0.75;
-      if (ax <= 1) return 9 - 8 * ax;
-      return NaN;
-    };
-    const fTop = (x) =>
-      x < -3 ? w(x) : x < -1 ? l(x) : x <= 1 ? h(x) : x < 3 ? r(x) : w(x);
-
-    const gBottom = (x) => {
-      const ax = abs(x);
-      const t2i = abs(ax - 2) - 1;
-      const t2 = sqrt(1 - t2i * t2i);
-      const ell = 3 * sqrt(1 - (x / 7) ** 2);
-      const bracket =
-        0.5 * ax + t2 - ((3 * Math.sqrt(33) - 7) / 112) * x * x + ell - 3;
-      const window = sgn(x + 4) - sgn(x - 4);
-      return 0.5 * bracket * window - ell;
-    };
+    const scale = this.scale;
 
     ctx.fillStyle = "rgba(102,126,234,0.25)";
     ctx.strokeStyle = "rgba(102,126,234,0.8)";
     ctx.lineWidth = 1;
 
-    const path = new Path2D();
-    const XMIN = -7,
-      XMAX = 7;
-    const steps = 800;
-    const dx = (XMAX - XMIN) / steps;
+    ctx.beginPath();
+    ctx.moveTo(this.center.x, this.center.y);
+    ctx.lineTo(this.center.x - R * scale, this.center.y);
+    ctx.arc(this.center.x, this.center.y, R * scale, Math.PI, 3 * Math.PI / 2);
+    ctx.lineTo(this.center.x, this.center.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
 
-    let xb = XMIN;
-    path.moveTo(X(xb), Y(fTop(xb)));
-    for (xb = XMIN + dx; xb <= XMAX + 1e-9; xb += dx) {
-      path.lineTo(X(xb), Y(fTop(xb)));
-    }
+    ctx.beginPath();
+    ctx.rect(
+      this.center.x - R * scale,
+      this.center.y,
+      R * scale,
+      R * scale
+    );
+    ctx.fill();
+    ctx.stroke();
 
-    for (xb = XMAX; xb >= XMIN - 1e-9; xb -= dx) {
-      path.lineTo(X(xb), Y(gBottom(xb)));
-    }
-    path.closePath();
-    ctx.fill(path);
-    ctx.stroke(path);
+    ctx.beginPath();
+    ctx.moveTo(this.center.x, this.center.y);
+    ctx.lineTo(this.center.x + R * scale, this.center.y);
+    ctx.lineTo(this.center.x, this.center.y + (R / 2) * scale);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
   }
 
   drawLabels() {
@@ -188,15 +176,15 @@ class Graph {
     const ctx = this.ctx;
     const activeR = this.getSelectedR();
     (this.points || []).forEach((p) => {
-      if (Number(p.r) === activeR) {
+      if (Number(p.r) === Number(activeR)) {
         const x = this.center.x + p.x * this.scale;
         const y = this.center.y - p.y * this.scale;
         ctx.beginPath();
-        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
         ctx.fillStyle = p.hit ? "#27ae60" : "#e74c3c";
         ctx.fill();
         ctx.strokeStyle = "#fff";
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 2;
         ctx.stroke();
       }
     });
@@ -204,8 +192,12 @@ class Graph {
 
   handleClick(ev) {
     const rect = this.canvas.getBoundingClientRect();
-    const x = (ev.clientX - rect.left - this.center.x) / this.scale;
-    const y = (this.center.y - (ev.clientY - rect.top)) / this.scale;
+    const xRaw = (ev.clientX - rect.left - this.center.x) / this.scale;
+    const yRaw = (this.center.y - (ev.clientY - rect.top)) / this.scale;
+
+    const x = Math.round(xRaw * 10) / 10;
+    const y = Math.round(yRaw * 10) / 10;
+
     const rEl = document.querySelector('input[name="r"]:checked');
     if (!rEl) {
       const rr = document.getElementById("r-error");
@@ -215,10 +207,21 @@ class Graph {
 
     const xInput = document.getElementById("x");
     const yInput = document.getElementById("y");
+    const xSlider = document.getElementById("x-slider");
+    const xValue = document.getElementById("x-value");
+
     xInput.value = String(x);
     yInput.value = String(y);
-    if (typeof validateForm === "function" ? validateForm() : true) {
-      document.getElementById("hitForm").submit();
+
+    if (xSlider) xSlider.value = String(x);
+    if (xValue) xValue.textContent = String(x);
+
+    const clearFlag = document.getElementById("clear-flag");
+    if (clearFlag) clearFlag.value = "0";
+
+    const submitBtn = document.getElementById("submitBtn");
+    if (submitBtn) {
+      submitBtn.click();
     }
   }
 
